@@ -1,0 +1,63 @@
+% A basic matlab wrapper to send a short telegram message.
+% The message appears in a conversation with a telegram bot.
+% You will need to get the http access token of a (your) telegram bot
+% as well as your conversation ID with this bot.
+% To find these, follow the general introduction
+% which is in the README of the root of this repo.
+
+% Jan K. Schluesener
+% github.com/jkschluesener/pingme
+% License: MIT
+
+function [status, cmdout] = pingme(message, token, chatid, silent)
+  % [status, cmdout] = pingme(message, token, chatid)
+
+  % For simplicity sake, create a curl command and hand it to the OS.
+  % This makes this function compatible with GNU Octave.
+  % Tested on Linux and Mac.
+  
+  % Parameters:
+  % -----------
+  % message (str): Message you wish to send. Markdown styling.
+  % token (str): Telegram http api token.
+  % chatid (str): Conversation id.
+  % silent (int, float, bool): Whether the message is silent
+  
+  % Returns:
+  % --------
+  % status (double): Command exit code.
+  % cmdout (str): Return of command, json.
+  %               Successful execution is noted as a boolean under the key 'ok'.
+
+  % Create 'data' json. Matlab has no support for multi-line strings.
+  data = sprintf(strjoin(...
+      ["'", ...
+      "{ ", ...
+      '"text": "%s", ', ...
+      '"parse_mode": "markdown", ', ...
+      '"disable_web_page_preview": true, ', ...
+      '"disable_notification": %d, ', ...
+      '"reply_to_message_id": null, ', ...
+      '"chat_id": "%s" ', ...
+      "}", ...
+      "'" ]), ...
+      message, silent, chatid);
+
+  % create url w/ token
+  url = ['https://api.telegram.org/bot', token, '/sendMessage'];
+
+  % create command using above strings
+  cmd = sprintf(strjoin(...
+      [...
+      "curl --request POST " ...
+      "--url %s " ...
+      "--header 'accept: application/json' " ...
+      "--header 'content-type: application/json' " ...
+      "--data %s " ...
+      ]), ...
+      url, data);
+
+  % run command using the os
+  [status, cmdout] = system(cmd);
+
+end
