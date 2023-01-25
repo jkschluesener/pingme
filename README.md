@@ -6,6 +6,9 @@ Intended to inform you about program or system states / crashes, etc.
 
 ## Telegram Setup
 
+Instructions on how to create a Telegram Bot and get your API key, as well as a message ID
+can be found e.g. [here](https://core.telegram.org/bots#how-do-i-create-a-bot).
+
 ## Installation
 
 The scripts are small with minimal dependencies.
